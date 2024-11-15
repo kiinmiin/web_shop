@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add product</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav id="navbar">
+        <ul>
+            <li><a href="/shop">Shop</a></li>
+            <li><a href="/products">Products</a></li>
+            <li><a href="/cart">Cart</a></li>
+            <li><a class="current" href="/add-products">Add Product</a></li>
+            <li><a href="/admin-products">Admin Products</a></li>
+        </ul>
+    </nav>
+    <div class="card">
+        <div class="container">
+            <h1>Add product form</h1>
+            <form action="" class="add-product-form">
+				<div>
+					<label for="name">Book title</label>
+					<input type="text" id="name" placeholder="Enter the name of the book">
+				</div>
+				<div>
+					<label for="imageUrl">Enter the imageUrl</label>
+					<input type="text" id="imageUrl" placeholder="Enter image url of the book">
+				</div>
+				<div>
+					<label for="description">Add the description</label>
+					<textarea id="text" placeholder="Enter the description"></textarea>
+				</div>
+                <div>
+                    <label for="price">Add the price</label>
+                    <input id="float" placeholder="Enter the price">
+                </div>
+				<input type="submit" value="Send product form" class="submit-btn">
+			</form>
+        </div>
+    </div>
+</body>
+</html>
