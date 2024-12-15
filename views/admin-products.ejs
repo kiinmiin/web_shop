@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error</title>
+    <title>Admin Products</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,9 +13,25 @@
             <li><a href="/products">Products</a></li>
             <li><a href="/cart">Cart</a></li>
             <li><a href="/add-products">Add Product</a></li>
-            <li><a href="/admin-products">Admin Products</a></li>
+            <li><a class="current" href="/admin-products">Admin Products</a></li>
         </ul>
     </nav>
-    <b>Admin Page</b>
+    <h1>Admin Products</h1>
+    <ul>
+        <% products.forEach(product => { %>
+            <li>
+                <h2><%= product.title %></h2>
+                <img src="<%= product.imageUrl %>" alt="<%= product.title %>" />
+                <p>Description: <%= product.description %></p>
+                <p>Price: $<%= product.price %></p>
+                <form action="/admin/edit-product/<%= product.id %>" method="GET">
+                    <button type="submit">Edit</button>
+                </form>
+                <form action="/admin/delete-product/<%= product.id %>" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        <% }); %>
+    </ul>
 </body>
 </html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="utf-8">
+    <title>Cart</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar">
+        <ul>
+            <li><a href="/shop">Shop</a></li>
+            <li><a href="/products">Products</a></li>
+            <li><a class="current" href="/cart">Cart</a></li>
+            <li><a href="/add-products">Add Product</a></li>
+            <li><a href="/admin-products">Admin Products</a></li>
+        </ul>
+    </nav>
+    <h1>Your Cart</h1>
+    <ul>
+        <% if (cart && cart.Products.length > 0) { %>
+            <% cart.Products.forEach(item => { %>
+                <li>
+                    <h2><%= item.title %></h2>
+                    <img src="<%= item.imageUrl %>" alt="<%= item.title %>" />
+                    <p>Price: $<%= item.price %></p>
+                    <p>Quantity: <%= item.CartItem.quantity %></p>
+                    <form action="/cart/update-cart/<%= item.CartItem.id %>" method="POST">
+                        <input type="number" name="quantity" value="<%= item.CartItem.quantity %>" min="1">
+                        <button type="submit">Update Quantity</button>
+                    </form>
+                    <form action="/cart/remove-cart/<%= item.CartItem.id %>" method="POST">
+                        <button type="submit">Remove</button>
+                    </form>
+                </li>
+            <% }); %>
+        <% } else { %>
+            <p>Your cart is empty.</p>
+        <% } %>
+    </ul>
+</body>
+</html>

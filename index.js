@@ -1,70 +1,77 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const Product = require('./models/Product');
 const path = require('path');
 const sequelize = require('./utils/db');
-const adminRoutes = require('./routes/admin');
-const addProductsRoutes = require('./routes/add-product');
+const Product = require('./models/Product')(sequelize); 
+const Cart = require('./models/Cart')(sequelize); 
+const CartItem = require('./models/CartItem')(sequelize); 
+const adminRoutes = require('./routes/admin'); 
+const cartRoutes = require('./routes/cart'); 
+const shopRoutes = require('./routes/shop'); 
 
-const app = express()
+const app = express();
 
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.set('view engine', 'ejs')
-app.set('views', 'views')
+app.set('view engine', 'ejs');
+app.set('views', 'views');
 
-// test data (book)
+Cart.associate({ CartItem, Product });
+CartItem.associate({ Cart, Product });
+Product.associate = (models) => {
+    Product.hasMany(models.CartItem, { foreignKey: 'productId' });
+};
+
+console.log(Cart.associations)
+console.log(CartItem.associations)
+console.log(Product.associations)
+
 const initializeData = async () => {
-    await sequelize.sync();
-    const productCount = await Product.count();
-    if (productCount === 0) {
-        await Product.bulkCreate([
-           {
-                title: 'A Book',
-                imageUrl: 'https://www.publicdomainpictures.net/pictures/10000/velka/1-1210009435EGmE.jpg',
-                description: 'This is an awesome book!',
-                price: 19.99
-           } 
-        ]);
-    } 
-}; 
+    try {
+        await sequelize.sync();
+        console.log("Database & tables synchronized!");
+    } catch (error) {
+        console.error("Error synchronizing the database:", error);
+    }
+};
 
 initializeData();
 
-app.get('/shop', async (req, res) => {
+app.use('/shop', shopRoutes);
+app.use('/admin', adminRoutes);
+app.use('/cart', cartRoutes);
+
+app.get('/products', async (req, res) => {
     try {
         const products = await Product.findAll();
-        res.render('shop', {products});
+        res.render('shop', { products }); 
     } catch (error) {
-        res.render('error', {message: 'Could not retrieve products'});
-    } 
+        console.error("Error retrieving products:", error);
+        res.render('error', { message: 'Could not retrieve products' });
+    }
+});
+
+app.get('/add-products', (req, res) => {
+    res.render('add-products');
 });
 
 app.get('/admin-products', async (req, res) => {
     try {
-        res.render('admin-products');
+        const products = await Product.findAll();
+        res.render('admin-products', { products });
     } catch (error) {
-        res.render('error', {message: 'Failed to load'});
-    } 
+        console.error("Error retrieving products:", error);
+        res.render('error', { message: 'Could not retrieve products' });
+    }
 });
 
-const renderError = (req, res) => {
-    res.render('error', {message: 'Page not found or not implemented'})
-} 
-
-app.get('/add-products', async (req, res) => {
-    try {
-        res.render('add-products');
-    } catch (error) {
-        res.render('error', {message: 'Failed to load'})
-    } 
+app.use((req, res) => {
+    res.render('error', { message: 'Page not found or not implemented' });
 });
 
-app.get('/products', renderError)
-app.get('/cart', renderError)
-app.get('/add-products', renderError)
+
 
 app.listen(3042, () => {
-    console.log('Server is connected')
-})
+    console.log(`Server is connected`);
+});
